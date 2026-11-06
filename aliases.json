@@ -1,0 +1,754 @@
+{
+ "_comment": "canonical name -> synonyms. Edit freely, then re-run build_data.py. 'en' is the English display name.",
+ "盐": {
+  "aliases": [
+   "食盐",
+   "食用盐",
+   "精盐",
+   "细盐",
+   "海盐",
+   "盐巴"
+  ],
+  "en": "salt"
+ },
+ "食用油": {
+  "aliases": [
+   "油",
+   "植物油",
+   "色拉油",
+   "菜籽油",
+   "花生油",
+   "玉米油",
+   "菜油",
+   "调和油",
+   "葵花籽油",
+   "炒菜油"
+  ],
+  "en": "cooking oil"
+ },
+ "水": {
+  "aliases": [
+   "清水",
+   "温水",
+   "开水",
+   "热水",
+   "凉水",
+   "冷水",
+   "纯净水",
+   "饮用水",
+   "沸水",
+   "冷开水"
+  ],
+  "en": "water"
+ },
+ "白糖": {
+  "aliases": [
+   "白砂糖",
+   "糖",
+   "细砂糖",
+   "砂糖",
+   "细白砂糖"
+  ],
+  "en": "sugar"
+ },
+ "冰糖": {
+  "aliases": [],
+  "en": "rock sugar"
+ },
+ "红糖": {
+  "aliases": [],
+  "en": "brown sugar"
+ },
+ "生抽": {
+  "aliases": [
+   "淡口酱油",
+   "生抽酱油",
+   "酱油",
+   "鲜酱油"
+  ],
+  "en": "light soy sauce"
+ },
+ "老抽": {
+  "aliases": [
+   "dark soy sauce"
+  ],
+  "en": "dark soy sauce"
+ },
+ "料酒": {
+  "aliases": [
+   "黄酒",
+   "花雕酒",
+   "绍兴黄酒",
+   "料酒（可选）"
+  ],
+  "en": "cooking wine"
+ },
+ "醋": {
+  "aliases": [
+   "香醋",
+   "陈醋",
+   "米醋",
+   "白醋",
+   "白米醋",
+   "镇江香醋",
+   "山西陈醋",
+   "老醋"
+  ],
+  "en": "vinegar"
+ },
+ "淀粉": {
+  "aliases": [
+   "生粉",
+   "玉米淀粉",
+   "土豆淀粉",
+   "红薯淀粉",
+   "太白粉"
+  ],
+  "en": "starch"
+ },
+ "胡椒粉": {
+  "aliases": [
+   "白胡椒粉",
+   "白胡椒"
+  ],
+  "en": "white pepper"
+ },
+ "黑胡椒": {
+  "aliases": [
+   "现磨黑胡椒",
+   "黑胡椒碎",
+   "黑胡椒粉",
+   "黑胡椒粒"
+  ],
+  "en": "black pepper"
+ },
+ "香油": {
+  "aliases": [
+   "芝麻油",
+   "芝麻香油",
+   "麻油",
+   "小磨香油"
+  ],
+  "en": "sesame oil"
+ },
+ "鸡精": {
+  "aliases": [
+   "鸡粉"
+  ],
+  "en": "chicken bouillon"
+ },
+ "味精": {
+  "aliases": [],
+  "en": "MSG"
+ },
+ "蚝油": {
+  "aliases": [
+   "耗油"
+  ],
+  "en": "oyster sauce"
+ },
+ "葱": {
+  "aliases": [
+   "小葱",
+   "香葱",
+   "葱花",
+   "大葱",
+   "葱段",
+   "青葱",
+   "葱白",
+   "葱绿",
+   "细香葱",
+   "大葱段"
+  ],
+  "en": "scallion"
+ },
+ "姜": {
+  "aliases": [
+   "生姜",
+   "姜片",
+   "姜末",
+   "姜丝",
+   "老姜",
+   "嫩姜"
+  ],
+  "en": "ginger"
+ },
+ "大蒜": {
+  "aliases": [
+   "蒜",
+   "蒜头",
+   "蒜瓣",
+   "蒜末",
+   "蒜蓉",
+   "蒜粒",
+   "蒜泥"
+  ],
+  "en": "garlic"
+ },
+ "番茄": {
+  "aliases": [
+   "西红柿",
+   "洋柿子",
+   "番茄（西红柿）",
+   "小番茄",
+   "圣女果",
+   "牛番茄",
+   "西红柿（番茄）"
+  ],
+  "en": "tomato"
+ },
+ "鸡蛋": {
+  "aliases": [
+   "蛋",
+   "土鸡蛋",
+   "鸡蛋液",
+   "蛋液"
+  ],
+  "en": "egg"
+ },
+ "土豆": {
+  "aliases": [
+   "马铃薯",
+   "洋芋",
+   "小土豆"
+  ],
+  "en": "potato"
+ },
+ "香菜": {
+  "aliases": [
+   "芫荽",
+   "香菜末"
+  ],
+  "en": "cilantro"
+ },
+ "洋葱": {
+  "aliases": [
+   "圆葱",
+   "紫洋葱",
+   "红洋葱"
+  ],
+  "en": "onion"
+ },
+ "青椒": {
+  "aliases": [
+   "青辣椒",
+   "尖椒",
+   "菜椒",
+   "彩椒",
+   "灯笼椒",
+   "甜椒",
+   "青尖椒",
+   "线椒"
+  ],
+  "en": "green pepper"
+ },
+ "小米椒": {
+  "aliases": [
+   "小米辣",
+   "朝天椒",
+   "美人椒"
+  ],
+  "en": "bird's eye chili"
+ },
+ "干辣椒": {
+  "aliases": [
+   "干红辣椒",
+   "红辣椒干",
+   "干辣椒段"
+  ],
+  "en": "dried chili"
+ },
+ "辣椒面": {
+  "aliases": [
+   "干辣椒面",
+   "红辣椒粉",
+   "辣椒碎",
+   "辣椒粉"
+  ],
+  "en": "chili powder"
+ },
+ "牛奶": {
+  "aliases": [
+   "全脂牛奶",
+   "纯牛奶"
+  ],
+  "en": "milk"
+ },
+ "黄油": {
+  "aliases": [
+   "无盐黄油"
+  ],
+  "en": "butter"
+ },
+ "面粉": {
+  "aliases": [
+   "中筋面粉",
+   "普通面粉",
+   "中筋粉",
+   "小麦粉"
+  ],
+  "en": "flour"
+ },
+ "低筋面粉": {
+  "aliases": [
+   "低筋粉"
+  ],
+  "en": "cake flour"
+ },
+ "大米": {
+  "aliases": [
+   "米",
+   "粳米",
+   "稻米"
+  ],
+  "en": "rice (raw)"
+ },
+ "米饭": {
+  "aliases": [
+   "隔夜米饭",
+   "隔夜饭",
+   "熟米饭",
+   "冷米饭"
+  ],
+  "en": "cooked rice"
+ },
+ "豆腐": {
+  "aliases": [
+   "嫩豆腐",
+   "老豆腐",
+   "北豆腐",
+   "南豆腐"
+  ],
+  "en": "tofu"
+ },
+ "胡萝卜": {
+  "aliases": [
+   "红萝卜"
+  ],
+  "en": "carrot"
+ },
+ "白萝卜": {
+  "aliases": [
+   "萝卜"
+  ],
+  "en": "daikon"
+ },
+ "茄子": {
+  "aliases": [
+   "长茄子",
+   "圆茄子"
+  ],
+  "en": "eggplant"
+ },
+ "黄瓜": {
+  "aliases": [
+   "青瓜"
+  ],
+  "en": "cucumber"
+ },
+ "白菜": {
+  "aliases": [
+   "大白菜",
+   "小白菜",
+   "白菜心",
+   "娃娃菜"
+  ],
+  "en": "napa cabbage"
+ },
+ "包菜": {
+  "aliases": [
+   "卷心菜",
+   "圆白菜",
+   "甘蓝",
+   "洋白菜"
+  ],
+  "en": "cabbage"
+ },
+ "青菜": {
+  "aliases": [
+   "上海青",
+   "小青菜",
+   "油菜",
+   "青菜心"
+  ],
+  "en": "bok choy"
+ },
+ "香菇": {
+  "aliases": [
+   "干香菇",
+   "鲜香菇",
+   "冬菇"
+  ],
+  "en": "shiitake"
+ },
+ "五花肉": {
+  "aliases": [
+   "五花肉片",
+   "带皮五花肉",
+   "猪五花",
+   "猪五花肉"
+  ],
+  "en": "pork belly"
+ },
+ "猪肉末": {
+  "aliases": [
+   "肉末",
+   "猪肉馅",
+   "肉馅",
+   "猪绞肉",
+   "猪肉糜",
+   "猪肉泥"
+  ],
+  "en": "ground pork"
+ },
+ "猪肉": {
+  "aliases": [
+   "瘦肉",
+   "猪瘦肉",
+   "精肉",
+   "里脊",
+   "猪里脊",
+   "里脊肉",
+   "猪里脊肉",
+   "梅花肉"
+  ],
+  "en": "pork"
+ },
+ "排骨": {
+  "aliases": [
+   "猪排骨",
+   "小排",
+   "肋排",
+   "猪肋排",
+   "猪小排"
+  ],
+  "en": "pork ribs"
+ },
+ "鸡腿": {
+  "aliases": [
+   "鸡大腿",
+   "琵琶腿",
+   "鸡腿肉"
+  ],
+  "en": "chicken thigh"
+ },
+ "鸡胸肉": {
+  "aliases": [
+   "鸡胸"
+  ],
+  "en": "chicken breast"
+ },
+ "鸡翅": {
+  "aliases": [
+   "鸡中翅",
+   "鸡翅中"
+  ],
+  "en": "chicken wings"
+ },
+ "牛肉": {
+  "aliases": [
+   "牛里脊",
+   "牛柳",
+   "牛腩",
+   "肥牛",
+   "肥牛卷",
+   "牛肉片"
+  ],
+  "en": "beef"
+ },
+ "虾": {
+  "aliases": [
+   "鲜虾",
+   "大虾",
+   "基围虾",
+   "明虾",
+   "虾仁",
+   "对虾",
+   "黑虎虾",
+   "青虾"
+  ],
+  "en": "shrimp"
+ },
+ "八角": {
+  "aliases": [
+   "大料",
+   "大茴香"
+  ],
+  "en": "star anise"
+ },
+ "花椒": {
+  "aliases": [
+   "花椒粒"
+  ],
+  "en": "Sichuan peppercorn"
+ },
+ "桂皮": {
+  "aliases": [
+   "肉桂"
+  ],
+  "en": "cassia bark"
+ },
+ "香叶": {
+  "aliases": [
+   "月桂叶"
+  ],
+  "en": "bay leaf"
+ },
+ "豆瓣酱": {
+  "aliases": [
+   "郫县豆瓣酱",
+   "郫县豆瓣",
+   "辣豆瓣酱"
+  ],
+  "en": "doubanjiang"
+ },
+ "番茄酱": {
+  "aliases": [
+   "茄汁",
+   "番茄沙司"
+  ],
+  "en": "ketchup"
+ },
+ "芝麻": {
+  "aliases": [
+   "白芝麻",
+   "熟白芝麻",
+   "黑芝麻",
+   "熟芝麻"
+  ],
+  "en": "sesame"
+ },
+ "淡奶油": {
+  "aliases": [
+   "动物淡奶油",
+   "奶油",
+   "鲜奶油"
+  ],
+  "en": "heavy cream"
+ },
+ "柠檬": {
+  "aliases": [
+   "柠檬汁",
+   "柠檬片"
+  ],
+  "en": "lemon"
+ },
+ "孜然粉": {
+  "aliases": [
+   "孜然",
+   "孜然粒"
+  ],
+  "en": "cumin"
+ },
+ "五香粉": {
+  "aliases": [],
+  "en": "five-spice powder"
+ },
+ "啤酒": {
+  "aliases": [],
+  "en": "beer"
+ },
+ "冰块": {
+  "aliases": [
+   "碎冰",
+   "冰"
+  ],
+  "en": "ice"
+ },
+ "豆芽": {
+  "aliases": [
+   "绿豆芽",
+   "黄豆芽"
+  ],
+  "en": "bean sprouts"
+ },
+ "西兰花": {
+  "aliases": [
+   "西蓝花"
+  ],
+  "en": "broccoli"
+ },
+ "玉米": {
+  "aliases": [
+   "甜玉米",
+   "玉米粒"
+  ],
+  "en": "corn"
+ },
+ "韭菜": {
+  "aliases": [],
+  "en": "chives"
+ },
+ "芹菜": {
+  "aliases": [
+   "香芹",
+   "西芹"
+  ],
+  "en": "celery"
+ },
+ "面条": {
+  "aliases": [
+   "挂面",
+   "鲜面条",
+   "细面条",
+   "手擀面"
+  ],
+  "en": "noodles"
+ },
+ "吐司": {
+  "aliases": [
+   "吐司片",
+   "切片面包",
+   "面包片"
+  ],
+  "en": "toast"
+ },
+ "酵母": {
+  "aliases": [
+   "干酵母",
+   "即发干酵母",
+   "安琪酵母"
+  ],
+  "en": "yeast"
+ },
+ "泡打粉": {
+  "aliases": [],
+  "en": "baking powder"
+ },
+ "小苏打": {
+  "aliases": [
+   "食用小苏打"
+  ],
+  "en": "baking soda"
+ },
+ "蜂蜜": {
+  "aliases": [],
+  "en": "honey"
+ },
+ "猪油": {
+  "aliases": [
+   "板油"
+  ],
+  "en": "lard"
+ },
+ "咖喱块": {
+  "aliases": [
+   "咖喱",
+   "咖喱粉"
+  ],
+  "en": "curry"
+ },
+ "椰浆": {
+  "aliases": [
+   "椰奶"
+  ],
+  "en": "coconut milk"
+ },
+ "木耳": {
+  "aliases": [
+   "黑木耳",
+   "干木耳"
+  ],
+  "en": "wood ear"
+ },
+ "豆豉": {
+  "aliases": [
+   "老干妈豆豉"
+  ],
+  "en": "fermented black beans"
+ },
+ "腐乳": {
+  "aliases": [
+   "红腐乳",
+   "白腐乳"
+  ],
+  "en": "fermented tofu"
+ },
+ "辣椒": {
+  "aliases": [
+   "红椒",
+   "红辣椒",
+   "鲜红辣椒"
+  ],
+  "en": "chili pepper"
+ },
+ "蒜苗": {
+  "aliases": [],
+  "en": "garlic sprouts"
+ },
+ "橄榄油": {
+  "aliases": [],
+  "en": "olive oil"
+ },
+ "酸奶": {
+  "aliases": [
+   "原味酸奶"
+  ],
+  "en": "yogurt"
+ },
+ "芝麻酱": {
+  "aliases": [],
+  "en": "sesame paste"
+ },
+ "冬瓜": {
+  "aliases": [],
+  "en": "winter melon"
+ },
+ "生菜": {
+  "aliases": [],
+  "en": "lettuce"
+ },
+ "火腿肠": {
+  "aliases": [],
+  "en": "sausage (ham)"
+ },
+ "培根": {
+  "aliases": [],
+  "en": "bacon"
+ },
+ "糯米": {
+  "aliases": [],
+  "en": "glutinous rice"
+ },
+ "辣椒油": {
+  "aliases": [
+   "油泼辣子",
+   "红油"
+  ],
+  "en": "chili oil"
+ },
+ "皮蛋": {
+  "aliases": [],
+  "en": "century egg"
+ },
+ "鸡肉": {
+  "aliases": [],
+  "en": "chicken"
+ },
+ "金针菇": {
+  "aliases": [],
+  "en": "enoki"
+ },
+ "豆角": {
+  "aliases": [
+   "四季豆",
+   "长豆角"
+  ],
+  "en": "green beans"
+ },
+ "花菜": {
+  "aliases": [
+   "花椰菜",
+   "菜花"
+  ],
+  "en": "cauliflower"
+ },
+ "米酒": {
+  "aliases": [],
+  "en": "rice wine"
+ },
+ "年糕": {
+  "aliases": [],
+  "en": "rice cake"
+ }
+}

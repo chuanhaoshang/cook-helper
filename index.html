@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>做饭助手 · Cook Helper</title>
+<meta name="description" content="今天吃什么、按食材找菜谱、搜菜谱。数据来自 HowToCook。">
+<style>
+:root{
+  --bg:#faf7f2; --card:#ffffff; --ink:#2b2622; --mute:#7a7066; --line:#e8e1d6;
+  --acc:#d9642b; --acc-ink:#ffffff; --acc-soft:#fbe8dc; --ok:#2f8f4e; --ok-soft:#e3f3e8; --warn:#b4691a; --warn-soft:#fbefd9;
+  --r:14px; --shadow:0 1px 2px rgba(60,40,20,.06),0 4px 14px rgba(60,40,20,.06);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#171412; --card:#221e1b; --ink:#f1ebe3; --mute:#a2978a; --line:#352f2a;
+  --acc:#ef7f46; --acc-ink:#1a120c; --acc-soft:#3a2418; --ok:#5cc07c; --ok-soft:#1d3125; --warn:#e3a24f; --warn-soft:#38291a;
+  --shadow:none;}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Roboto,sans-serif;padding-bottom:calc(88px + env(safe-area-inset-bottom))}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);padding:calc(10px + env(safe-area-inset-top)) 16px 0}
+.bar{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:8px;justify-content:space-between}
+h1{font-size:18px;margin:0;letter-spacing:.2px}
+.icon-btn{background:none;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px;color:var(--ink)}
+.tabs{max-width:760px;margin:8px auto 0;display:flex;gap:2px}
+.tab{flex:1;background:none;border:0;border-bottom:3px solid transparent;padding:10px 4px;font-weight:600;color:var(--mute);font-size:15px}
+.tab[aria-selected=true]{color:var(--acc);border-bottom-color:var(--acc)}
+main{max-width:760px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:var(--shadow)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.mute{color:var(--mute);font-size:14px}
+.stack>*+*{margin-top:12px}
+.btn{background:var(--acc);color:var(--acc-ink);border:0;border-radius:12px;padding:10px 16px;font-weight:700}
+.btn.ghost{background:none;color:var(--acc);border:1px solid var(--acc)}
+.btn.small{padding:6px 10px;font-size:14px;border-radius:10px}
+.btn:disabled{opacity:.45;cursor:default}
+input[type=text],input[type=search],select{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 11px;font-size:14px;line-height:1.3}
+.chip.on{background:var(--acc-soft);border-color:var(--acc);color:var(--acc);font-weight:600}
+.chip.miss{background:var(--warn-soft);border-color:transparent;color:var(--warn)}
+.chip.have{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.chip.static{cursor:default}
+.sug{margin-top:6px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+.sug button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:10px 12px}
+.sug button:last-child{border-bottom:0}
+.sec{margin:20px 0 8px;font-size:15px;font-weight:700}
+.sec small{font-weight:400;color:var(--mute)}
+.list{display:grid;gap:10px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;text-align:left;width:100%;display:block}
+.item .t{font-weight:700;font-size:16px}
+.item .m{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px;font-size:13px;color:var(--mute)}
+.item .miss{margin-top:8px}
+.slot{display:flex;gap:10px;align-items:stretch}
+.slot .item{flex:1}
+.slot .side{display:flex;flex-direction:column;gap:6px}
+.role{font-size:12px;font-weight:700;color:var(--acc);letter-spacing:.3px}
+.stars{color:var(--acc);letter-spacing:1px}
+.empty{text-align:center;color:var(--mute);padding:28px 8px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{background:var(--card);border:0;padding:6px 12px;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--acc-soft);color:var(--acc);font-weight:700}
+label.chk{display:flex;gap:8px;align-items:center}
+label.chk input{width:18px;height:18px;accent-color:var(--acc)}
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:760px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:18px 16px calc(28px + env(safe-area-inset-bottom))}
+@media (min-width:800px){.overlay{align-items:center}.sheet{border-radius:20px;max-height:86vh}}
+.sheet h2{margin:0 0 4px;font-size:22px}
+.sheet h3{margin:18px 0 6px;font-size:15px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px}
+ol.steps{padding-left:0;list-style:none;margin:0;counter-reset:s}
+ol.steps li{counter-increment:s;position:relative;padding:8px 0 8px 34px;border-bottom:1px solid var(--line)}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:8px;width:24px;height:24px;border-radius:50%;background:var(--acc-soft);color:var(--acc);font-weight:700;font-size:13px;display:grid;place-items:center}
+.tm{margin-left:6px;background:var(--acc-soft);color:var(--acc);border:0;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700}
+ul.plain{margin:0;padding-left:20px}
+#timers{position:fixed;left:0;right:0;bottom:calc(10px + env(safe-area-inset-bottom));z-index:60;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;padding:0 12px}
+.timer{pointer-events:auto;background:var(--ink);color:var(--bg);border-radius:999px;padding:8px 8px 8px 16px;display:flex;gap:10px;align-items:center;font-weight:700;box-shadow:0 4px 18px rgba(0,0,0,.3)}
+.timer.done{background:var(--acc);color:var(--acc-ink);animation:pulse 1s infinite}
+.timer button{background:rgba(255,255,255,.2);border:0;color:inherit;border-radius:999px;padding:4px 10px}
+@keyframes pulse{50%{transform:scale(1.04)}}
+footer{max-width:760px;margin:24px auto 0;padding:0 16px;color:var(--mute);font-size:13px}
+footer a{color:var(--acc)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <h1 id="title">🍳 做饭助手</h1>
+    <div class="row">
+      <button class="icon-btn" id="btnSet"></button>
+      <button class="icon-btn" id="btnLang" aria-label="Language">EN</button>
+    </div>
+  </div>
+  <div class="tabs" role="tablist" id="tabs"></div>
+</header>
+<main id="view"></main>
+<footer id="foot"></footer>
+<div id="timers" aria-live="polite"></div>
+<div id="modal"></div>
+
+<script src="recipes.js"></script>
+<script>
+"use strict";
+/* ---------- helpers ---------- */
+const R = window.RECIPES, ALIAS = window.ALIAS, EN = window.EN, EN2ZH = window.EN2ZH;
+const $ = (s, e = document) => e.querySelector(s);
+function h(tag, props, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (v == null || v === false) continue;
+    if (k === "class") el.className = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (k === "text") el.textContent = v;
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat()) if (kid != null && kid !== false) el.append(kid.nodeType ? kid : document.createTextNode(kid));
+  return el;
+}
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("cook_" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("cook_" + k, JSON.stringify(v)); } catch (e) {} }
+};
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+/* ---------- i18n ---------- */
+const T = {
+  zh: {
+    title: "🍳 做饭助手", settings: "设置", tab_today: "今天吃什么", tab_have: "食材找菜", tab_search: "搜菜谱",
+    people: "几个人吃", soup: "加汤/粥", staple: "加主食", reroll: "换一个", lock: "锁定", locked: "已锁定", all_new: "🎲 全部重新来",
+    only_mine: "只从我有的食材里选（最多缺 2 样）", max_diff: "最高难度", any: "不限",
+    shop: "购物清单", shop_empty: "不缺任何食材 🎉", copy: "复制清单", copied: "已复制 ✓", need_for: "用于",
+    role_veg: "素菜", role_meat: "荤菜", role_soup: "汤 / 粥", role_staple: "主食",
+    no_pool: "没有符合条件的菜，试试放宽筛选。",
+    have_h: "你有哪些食材？", have_ph: "输入食材，如：番茄、鸡蛋 / tomato", add: "添加", clear: "清空",
+    common: "常见食材（点一下选中）", assume: "默认家里有基础调料（盐、油、生抽等）",
+    ready: "现在就能做", miss_n: n => `只差 ${n} 样`, no_have: "先选几样你有的食材吧 👆", no_match: "暂时没有匹配的菜，试试多加几样食材。",
+    miss: "缺", search_ph: "搜菜名或食材，如：西红柿鸡蛋", all: "全部", fav: "★ 收藏", more: "显示更多", nores: "没找到，换个说法试试？",
+    cat_all: "全部", ings: "食材", amounts: "每份用量（参考原文）", tools: "工具", steps: "步骤", notes_en: "提示：菜谱正文目前只有中文。",
+    source: "查看原文（GitHub）", fav_add: "☆ 收藏", fav_del: "★ 已收藏", done_add: "做过了", done_del: "✓ 做过", optional: "（可选）", close: "关闭",
+    s_title: "设置", s_excl: "忌口 / 过敏", s_excl_ph: "再加一个，如：香菜、花生", s_presets: "快捷选项",
+    p_spicy: "不吃辣", p_seafood: "海鲜过敏", p_veg: "素食（蛋奶素）", s_basics: "我家一定有的基础调料", s_data: "数据与说明",
+    s_about: n => `共 ${n} 道菜。菜谱数据来自开源项目 HowToCook（Unlicense），本页只做检索展示。`,
+    s_note: "忌口与素食过滤是根据食材名称做的关键词判断，不保证 100% 准确，过敏请务必自己核对原文。",
+    sec_have: "你有的", timer_done: "时间到！", stop: "停止", times: "次",
+    ack1: "致谢：本页所有菜谱内容来自开源项目 ", ack2: "（作者 Anduin2017 及众多贡献者），以 Unlicense 协议开源。本页是基于该数据制作的非官方检索工具，与原项目无隶属关系。", diff: "难度", kcal: "大卡", people_unit: "人"
+  },
+  en: {
+    title: "🍳 Cook Helper", settings: "Settings", tab_today: "What to eat", tab_have: "By ingredients", tab_search: "Search",
+    people: "People eating", soup: "Add soup/porridge", staple: "Add staple", reroll: "Swap", lock: "Lock", locked: "Locked", all_new: "🎲 Shuffle all",
+    only_mine: "Only dishes I can (almost) make — up to 2 missing", max_diff: "Max difficulty", any: "Any",
+    shop: "Shopping list", shop_empty: "Nothing to buy 🎉", copy: "Copy list", copied: "Copied ✓", need_for: "for",
+    role_veg: "Veggie", role_meat: "Meat / fish", role_soup: "Soup / porridge", role_staple: "Staple",
+    no_pool: "No dishes match. Try relaxing the filters.",
+    have_h: "What ingredients do you have?", have_ph: "Type an ingredient, e.g. tomato, 鸡蛋", add: "Add", clear: "Clear",
+    common: "Common ingredients (tap to select)", assume: "Assume basic seasonings (salt, oil, soy sauce…)",
+    ready: "Ready to cook", miss_n: n => `Missing ${n}`, no_have: "Pick some ingredients first 👆", no_match: "No matches yet — add more ingredients.",
+    miss: "Need", search_ph: "Dish name or ingredient, e.g. 西红柿鸡蛋 / tomato egg", all: "All", fav: "★ Saved", more: "Show more", nores: "Nothing found. Try another term?",
+    cat_all: "All", ings: "Ingredients", amounts: "Amounts per serving (as written)", tools: "Equipment", steps: "Steps", notes_en: "Note: recipe text is in Chinese only for now.",
+    source: "View original (GitHub)", fav_add: "☆ Save", fav_del: "★ Saved", done_add: "Mark as cooked", done_del: "✓ Cooked", optional: " (optional)", close: "Close",
+    s_title: "Settings", s_excl: "Avoid / allergies", s_excl_ph: "Add one, e.g. 香菜, peanut", s_presets: "Quick presets",
+    p_spicy: "No spicy", p_seafood: "Seafood allergy", p_veg: "Vegetarian (eggs & dairy OK)", s_basics: "Seasonings I always have", s_data: "Data & notes",
+    s_about: n => `${n} dishes. Recipe data comes from the open-source HowToCook project (Unlicense); this page only indexes and displays it.`,
+    s_note: "Avoid/vegetarian filters work by keyword on ingredient names and are not 100% reliable. If you have allergies, check the original recipe yourself.",
+    sec_have: "You have", timer_done: "Time's up!", stop: "Stop", times: "×",
+    ack1: "Credits: all recipe content comes from the open-source project ", ack2: " (by Anduin2017 and many contributors), released under the Unlicense. This page is an unofficial search tool built on that data and is not affiliated with the original project.", diff: "Difficulty", kcal: "kcal", people_unit: ""
+  }
+};
+let S = {
+  lang: store.get("lang", /^zh/i.test(navigator.language || "zh") ? "zh" : "en"),
+  tab: store.get("tab", "today"),
+  have: store.get("have", []),
+  assume: store.get("assume", true),
+  basics: store.get("basics", window.BASICS),
+  excl: store.get("excl", []),
+  presets: store.get("presets", { spicy: false, seafood: false, veg: false }),
+  favs: store.get("favs", []), done: store.get("done", []),
+  people: store.get("people", 2), soup: store.get("soup", false), staple: store.get("staple", false),
+  maxDiff: store.get("maxDiff", 0), onlyMine: store.get("onlyMine", false),
+  menu: store.get("menu", null),
+  q: "", cat: "all", shown: 40
+};
+const save = (...ks) => ks.forEach(k => store.set(k, S[k]));
+const t = (k, ...a) => { const v = (T[S.lang][k] ?? T.zh[k] ?? k); return typeof v === "function" ? v(...a) : v; };
+
+/* ---------- ingredient names ---------- */
+const canonToAliases = {};
+for (const [a, c] of Object.entries(ALIAS)) (canonToAliases[c] ||= []).push(a);
+const ingName = x => (S.lang === "en" && EN[x]) ? `${EN[x]} (${x})` : x;
+const ingShort = x => (S.lang === "en" && EN[x]) ? EN[x] : x;
+function norm(tok) {
+  tok = tok.trim(); if (!tok) return "";
+  if (ALIAS[tok]) return ALIAS[tok];
+  const lo = tok.toLowerCase();
+  if (EN2ZH[lo]) return EN2ZH[lo];
+  if (lo.endsWith("s") && EN2ZH[lo.slice(0, -1)]) return EN2ZH[lo.slice(0, -1)];
+  return tok;
+}
+
+/* ---------- precompute ---------- */
+const freq = {};
+const catKeys = ["meat_dish", "aquatic", "vegetable_dish", "soup", "staple", "breakfast", "semi-finished", "dessert", "drink", "condiment"];
+for (const r of R) {
+  r._all = new Set(r.ings.flatMap(g => g.alts));
+  r._req = r.ings.filter(g => !g.optional);
+  r._text = r.name + " " + [...r._all].join(" ");
+  for (const g of r._req) { const a = g.alts[0]; freq[a] = (freq[a] || 0) + 1; }
+}
+const aliasKeys = Object.keys(ALIAS).sort((a, b) => b.length - a.length);
+function canonSet(str) { // find known ingredient names inside a string (longest first, non-overlapping)
+  const found = new Set(); let s = str;
+  for (const k of aliasKeys) if (s.includes(k)) { found.add(ALIAS[k]); s = s.split(k).join("·"); }
+  return found;
+}
+for (const r of R) r._nameSet = canonSet(r.name);
+const commonList = Object.entries(freq).filter(([k]) => !window.BASICS.includes(k) && (EN[k] || ALIAS[k])).sort((a, b) => b[1] - a[1]).slice(0, 40).map(e => e[0]);
+const suggestPool = [...new Set([...Object.keys(freq), ...Object.keys(EN)])].filter(k => !/锅|碗|盘|刀/.test(k));
+
+/* ---------- filters ---------- */
+const SPICY = ["辣", "花椒", "藤椒", "豆瓣"];
+const SEA = ["虾", "蟹", "鱼", "贝", "蛤", "蚝", "鱿", "墨", "海参", "海鲜", "鲍", "扇贝", "蛏"];
+const MEAT = ["肉", "排骨", "鸡", "牛", "羊", "猪", "鸭", "鹅", "虾", "鱼", "蟹", "腊肠", "火腿", "培根", "香肠", "蚝", "贝", "鲍", "鱿", "高汤", "肉汤"];
+const strip = s => s.replace(/鸡蛋|鸡精|鸡粉|蛋/g, "");
+function excluded(r) {
+  const alts = [...r._all];
+  const hay = r.name + " " + alts.join(" ");
+  if (S.excl.some(x => x && hay.includes(norm(x)))) return true;
+  if (S.presets.spicy && SPICY.some(k => hay.includes(k))) return true;
+  if (S.presets.seafood && (r.cat === "aquatic" || SEA.some(k => hay.includes(k)))) return true;
+  if (S.presets.veg && (r.cat === "meat_dish" || r.cat === "aquatic" || MEAT.some(k => strip(hay).includes(k)))) return true;
+  return false;
+}
+const diffOK = r => !S.maxDiff || !r.diff || r.diff <= S.maxDiff;
+function match(r) {
+  const have = new Set(S.have), bs = new Set(S.assume ? S.basics : []);
+  const sat = g => g.alts.some(a => have.has(a) || bs.has(a));
+  const missing = r._req.filter(g => !sat(g));
+  const matched = r._req.filter(g => g.alts.some(a => have.has(a)));
+  return { missing, matched, total: r._req.length };
+}
+const missLabel = g => g.alts.map(ingShort).join(S.lang === "en" ? " / " : "/");
+
+/* ---------- UI: shell ---------- */
+function renderShell() {
+  document.documentElement.lang = S.lang === "zh" ? "zh-CN" : "en";
+  $("#title").textContent = t("title");
+  $("#btnSet").textContent = "⚙ " + t("settings");
+  $("#btnLang").textContent = S.lang === "zh" ? "EN" : "中文";
+  const tabs = $("#tabs"); tabs.replaceChildren(
+    ...[["today", "tab_today"], ["have", "tab_have"], ["search", "tab_search"]].map(([id, k]) =>
+      h("button", { class: "tab", role: "tab", "aria-selected": S.tab === id, onclick: () => { S.tab = id; save("tab"); render(); } }, t(k))));
+  $("#foot").replaceChildren(h("p", {}, t("ack1"), h("a", { href: "https://github.com/Anduin2017/HowToCook", target: "_blank", rel: "noopener" }, "HowToCook ↗"), t("ack2")));
+}
+function render() { renderShell(); const v = $("#view"); v.replaceChildren(); ({ today: viewToday, have: viewHave, search: viewSearch })[S.tab](v); }
+
+/* ---------- recipe card ---------- */
+const stars = n => n ? "★".repeat(n) + "☆".repeat(Math.max(0, 5 - n)) : "";
+function recipeCard(r, extra) {
+  const m = h("div", { class: "m" }, h("span", { class: "chip static" }, r.catZh), r.diff ? h("span", { class: "stars" }, stars(r.diff)) : null,
+    r.kcal ? h("span", {}, `${r.kcal} ${t("kcal")}`) : null, S.done.includes(r.id) ? h("span", {}, "✓") : null, S.favs.includes(r.id) ? h("span", {}, "★") : null);
+  return h("button", { class: "item", onclick: () => openRecipe(r) }, h("div", { class: "t" }, r.name), m, extra || null);
+}
+
+/* ---------- Tab: today ---------- */
+const ROLES = { veg: ["vegetable_dish"], meat: ["meat_dish", "aquatic"], soup: ["soup"], staple: ["staple"] };
+function poolFor(role, avoidIds) {
+  return R.filter(r => ROLES[role].includes(r.cat) && !excluded(r) && diffOK(r) && !avoidIds.includes(r.id) &&
+    (!S.onlyMine || !S.have.length || (() => { const m = match(r); return m.matched.length >= 1 && m.missing.length <= 2; })()));
+}
+function planRoles() {
+  const n = S.people; let a = Math.floor((n + 1) / 2), b = n + 1 - a; // 素 a, 荤 b: a+b=N+1, a<=b<=a+1
+  if (S.presets.veg) { a += b; b = 0; } // vegetarian: no meat slots
+  return [...Array(b).fill("meat"), ...Array(a).fill("veg"), ...(S.soup ? ["soup"] : []), ...(S.staple ? ["staple"] : [])];
+}
+function genMenu(keepLocked) {
+  const old = keepLocked && S.menu ? S.menu : [];
+  const roles = planRoles(), out = [], used = [];
+  const lockedByRole = {}; old.filter(s => s.locked).forEach(s => (lockedByRole[s.role] ||= []).push(s));
+  for (const role of roles) {
+    const lk = (lockedByRole[role] || []).shift();
+    if (lk) { out.push(lk); used.push(lk.id); continue; }
+    const p = poolFor(role, used); const r = p.length ? pick(p) : null;
+    out.push({ role, id: r ? r.id : null, locked: false }); if (r) used.push(r.id);
+  }
+  S.menu = out; save("menu");
+}
+const byId = id => R.find(r => r.id === id);
+function viewToday(v) {
+  if (!S.menu || S.menu.length !== planRoles().length) genMenu(true);
+  const ctl = h("div", { class: "card stack" },
+    h("div", { class: "row" }, h("span", {}, t("people")),
+      h("div", { class: "seg" }, [1, 2, 3, 4, 5, 6].map(n => h("button", { "aria-pressed": S.people === n, onclick: () => { S.people = n; save("people"); genMenu(true); render(); } }, n)))),
+    h("div", { class: "row" },
+      h("label", { class: "chk" }, h("input", { type: "checkbox", checked: S.soup, onchange: e => { S.soup = e.target.checked; save("soup"); genMenu(true); render(); } }), t("soup")),
+      h("label", { class: "chk" }, h("input", { type: "checkbox", checked: S.staple, onchange: e => { S.staple = e.target.checked; save("staple"); genMenu(true); render(); } }), t("staple"))),
+    h("div", { class: "row" }, h("span", {}, t("max_diff")),
+      h("div", { class: "seg" }, [0, 1, 2, 3].map(n => h("button", { "aria-pressed": S.maxDiff === n, onclick: () => { S.maxDiff = n; save("maxDiff"); render(); } }, n ? "★".repeat(n) : t("any"))))),
+    h("label", { class: "chk" }, h("input", { type: "checkbox", checked: S.onlyMine, disabled: !S.have.length, onchange: e => { S.onlyMine = e.target.checked; save("onlyMine"); render(); } }), t("only_mine")),
+    h("button", { class: "btn", onclick: () => { genMenu(true); render(); } }, t("all_new")));
+  v.append(ctl);
+
+  const list = h("div", { class: "list", style: "margin-top:14px" });
+  S.menu.forEach((s, i) => {
+    const r = s.id ? byId(s.id) : null;
+    const label = h("div", { class: "role" }, t("role_" + s.role));
+    if (!r) { list.append(h("div", { class: "item" }, label, h("div", { class: "mute" }, t("no_pool")))); return; }
+    const mm = S.have.length ? match(r) : null;
+    const extra = mm && mm.missing.length ? h("div", { class: "chips miss" }, h("span", { class: "mute" }, t("miss") + ":"), mm.missing.slice(0, 6).map(g => h("span", { class: "chip miss static" }, missLabel(g)))) : null;
+    const card = recipeCard(r, extra); card.prepend(label);
+    list.append(h("div", { class: "slot" }, card, h("div", { class: "side" },
+      h("button", { class: "btn small ghost", onclick: () => rerollSlot(i) }, "🎲"),
+      h("button", { class: "btn small ghost", "aria-label": s.locked ? t("locked") : t("lock"), title: s.locked ? t("locked") : t("lock"), onclick: () => { s.locked = !s.locked; save("menu"); render(); } }, s.locked ? "🔒" : "🔓"))));
+  });
+  v.append(list);
+  v.append(h("div", { class: "sec" }, t("shop")), shoppingList());
+}
+function rerollSlot(i) {
+  const s = S.menu[i], used = S.menu.map(x => x.id).filter(Boolean);
+  const p = poolFor(s.role, used); if (p.length) { s.id = pick(p).id; s.locked = false; save("menu"); render(); }
+}
+function shoppingList() {
+  const have = new Set(S.have), bs = new Set(S.assume ? S.basics : []), need = new Map();
+  for (const s of S.menu) { const r = s.id && byId(s.id); if (!r) continue;
+    for (const g of r._req) { if (g.alts.some(a => have.has(a) || bs.has(a))) continue;
+      const k = missLabel(g); (need.get(k) || need.set(k, []).get(k)).push(r.name); } }
+  if (!need.size) return h("div", { class: "card mute" }, t("shop_empty"));
+  const txt = [...need].map(([k, d]) => `- ${k}  (${[...new Set(d)].join("、")})`).join("\n");
+  const btn = h("button", { class: "btn small ghost", onclick: async () => { try { await navigator.clipboard.writeText(txt); btn.textContent = t("copied"); } catch (e) { prompt("", txt); } } }, t("copy"));
+  return h("div", { class: "card stack" }, h("ul", { class: "plain" }, [...need].map(([k, d]) => h("li", {}, k, " ", h("span", { class: "mute" }, `${t("need_for")} ${[...new Set(d)].join("、")}`)))), btn);
+}
+
+/* ---------- Tab: by ingredients ---------- */
+function suggestions(q) {
+  q = q.trim().toLowerCase(); if (!q) return [];
+  const out = [];
+  for (const c of suggestPool) {
+    if (S.have.includes(c)) continue;
+    const al = canonToAliases[c] || [];
+    const hit = c.includes(q) || al.some(a => a.includes(q)) || (EN[c] && EN[c].toLowerCase().includes(q));
+    if (hit) out.push(c);
+    if (out.length >= 8) break;
+  }
+  return out;
+}
+function addHave(c) { c = norm(c); if (c && !S.have.includes(c)) { S.have.push(c); save("have"); } }
+function viewHave(v) {
+  const inp = h("input", { type: "search", placeholder: t("have_ph"), autocomplete: "off", enterkeyhint: "done", "aria-label": t("have_h") });
+  const sug = h("div", { class: "sug hidden" });
+  const upd = () => { const s = suggestions(inp.value); sug.replaceChildren(...s.map(c => h("button", { onclick: () => { addHave(c); inp.value = ""; render(); } }, ingName(c)))); sug.classList.toggle("hidden", !s.length); };
+  inp.addEventListener("input", upd);
+  const commit = () => { inp.value.split(/[,，、;；\s]+/).forEach(addHave); inp.value = ""; render(); };
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); commit(); } });
+  const top = h("div", { class: "card stack" }, h("div", { class: "sec", style: "margin:0" }, t("have_h")),
+    h("div", { class: "row" }, h("div", { class: "grow" }, inp), h("button", { class: "btn", onclick: commit }, t("add"))), sug,
+    S.have.length ? h("div", { class: "chips" }, S.have.map(c => h("button", { class: "chip on", onclick: () => { S.have = S.have.filter(x => x !== c); save("have"); render(); } }, ingShort(c) + " ✕")),
+      h("button", { class: "chip", onclick: () => { S.have = []; save("have"); render(); } }, t("clear"))) : null,
+    h("div", { class: "mute" }, t("common")),
+    h("div", { class: "chips" }, commonList.map(c => h("button", { class: "chip" + (S.have.includes(c) ? " on" : ""), onclick: () => { S.have.includes(c) ? S.have = S.have.filter(x => x !== c) : S.have.push(c); save("have"); render(); } }, ingShort(c)))),
+    h("label", { class: "chk" }, h("input", { type: "checkbox", checked: S.assume, onchange: e => { S.assume = e.target.checked; save("assume"); render(); } }), t("assume")));
+  v.append(top);
+  if (!S.have.length) { v.append(h("div", { class: "empty" }, t("no_have"))); return; }
+  const res = R.filter(r => !excluded(r) && diffOK(r)).map(r => ({ r, m: match(r) })).filter(x => x.m.matched.length >= 1 && x.m.missing.length <= 3);
+  res.sort((a, b) => a.m.missing.length - b.m.missing.length || b.m.matched.length - a.m.matched.length || (a.r.diff || 9) - (b.r.diff || 9));
+  if (!res.length) { v.append(h("div", { class: "empty" }, t("no_match"))); return; }
+  for (let k = 0; k <= 3; k++) {
+    const part = res.filter(x => x.m.missing.length === k); if (!part.length) continue;
+    v.append(h("div", { class: "sec" }, k ? t("miss_n", k) : t("ready"), " ", h("small", {}, `(${part.length})`)));
+    const list = h("div", { class: "list" });
+    for (const { r, m } of part.slice(0, k === 0 ? 60 : 30)) list.append(recipeCard(r, m.missing.length ? h("div", { class: "chips miss" }, h("span", { class: "mute" }, t("miss") + ":"), m.missing.map(g => h("span", { class: "chip miss static" }, missLabel(g)))) : null));
+    v.append(list);
+  }
+}
+
+/* ---------- Tab: search ---------- */
+function score(r, q, qset) {
+  if (r.name.includes(q)) return 100 - Math.min(50, r.name.length - q.length);
+  if (qset.size && [...qset].every(c => r._nameSet.has(c))) return 80;
+  if (qset.size && [...qset].every(c => r._all.has(c))) return 40;
+  if (qset.size && [...qset].some(c => r._nameSet.has(c))) return 20;
+  return r._text.includes(q) ? 10 : 0;
+}
+function viewSearch(v) {
+  const inp = h("input", { type: "search", value: S.q, placeholder: t("search_ph"), autocomplete: "off", enterkeyhint: "search" });
+  const out = h("div");
+  const catChips = h("div", { class: "chips", style: "margin-top:10px" });
+  const draw = () => {
+    catChips.replaceChildren(...[["all", t("cat_all")], ["fav", t("fav")], ...catKeys.map(k => [k, R.find(r => r.cat === k).catZh])].map(([k, lab]) =>
+      h("button", { class: "chip" + (S.cat === k ? " on" : ""), onclick: () => { S.cat = k; S.shown = 40; draw(); } }, lab)));
+    let q = S.q.trim(); const qz = q.split(/\s+/).map(norm).join("");
+    let qset = canonSet(q); for (const w of q.split(/\s+/)) { const c = norm(w); if (c !== w) qset.add(c); }
+    let list = R.filter(r => !excluded(r) && (S.cat === "all" || (S.cat === "fav" ? S.favs.includes(r.id) : r.cat === S.cat)));
+    if (q) { const sc = list.map(r => [r, Math.max(score(r, q, qset), score(r, qz, qset))]).filter(x => x[1] > 0);
+      const best = Math.max(0, ...sc.map(x => x[1])), floor = best >= 80 ? 80 : best >= 40 ? 40 : 1; // drop weak partial hits when real matches exist
+      list = sc.filter(x => x[1] >= floor).sort((a, b) => b[1] - a[1] || a[0].name.length - b[0].name.length).map(x => x[0]); }
+    else list = list.sort((a, b) => a.name.localeCompare(b.name, "zh"));
+    out.replaceChildren();
+    if (!list.length) { out.append(h("div", { class: "empty" }, t("nores"))); return; }
+    const l = h("div", { class: "list", style: "margin-top:12px" }, list.slice(0, S.shown).map(r => recipeCard(r)));
+    out.append(l);
+    if (list.length > S.shown) out.append(h("div", { style: "text-align:center;margin-top:12px" }, h("button", { class: "btn ghost", onclick: () => { S.shown += 40; draw(); } }, t("more") + ` (${list.length - S.shown})`)));
+  };
+  inp.addEventListener("input", () => { S.q = inp.value; S.shown = 40; draw(); });
+  v.append(h("div", { class: "card" }, inp, catChips), out); draw();
+}
+
+/* ---------- recipe detail ---------- */
+function stepEls(text) {
+  const re = /(\d+(?:\.\d+)?)(?:\s*[-~～到至]\s*(\d+(?:\.\d+)?))?\s*(秒钟?|分钟?|小时)/g, out = []; let last = 0, m;
+  while ((m = re.exec(text))) {
+    const hi = parseFloat(m[2] || m[1]), unit = m[3][0], secs = Math.round(hi * (unit === "秒" ? 1 : unit === "分" ? 60 : 3600));
+    out.push(text.slice(last, m.index + m[0].length)); last = m.index + m[0].length;
+    if (secs >= 5 && secs <= 6 * 3600) out.push(h("button", { class: "tm", title: "Timer", onclick: () => startTimer(secs) }, "⏱ " + fmt(secs)));
+  }
+  out.push(text.slice(last)); return out;
+}
+const fmt = s => { const hh = Math.floor(s / 3600), mm = Math.floor(s % 3600 / 60), ss = s % 60; return (hh ? hh + ":" + String(mm).padStart(2, "0") : mm) + ":" + String(ss).padStart(2, "0"); };
+function openRecipe(r) {
+  const have = new Set(S.have), bs = new Set(S.assume ? S.basics : []);
+  const close = () => { $("#modal").replaceChildren(); document.body.style.overflow = ""; };
+  const fav = h("button", { class: "btn small ghost", onclick: () => { toggle("favs", r.id); fav.textContent = S.favs.includes(r.id) ? t("fav_del") : t("fav_add"); } }, S.favs.includes(r.id) ? t("fav_del") : t("fav_add"));
+  const dn = h("button", { class: "btn small ghost", onclick: () => { toggle("done", r.id); dn.textContent = S.done.includes(r.id) ? t("done_del") : t("done_add"); } }, S.done.includes(r.id) ? t("done_del") : t("done_add"));
+  const ingChip = g => { const ok = g.alts.some(a => have.has(a) || bs.has(a)); return h("span", { class: "chip static " + (S.have.length || S.assume ? (ok ? "have" : (g.optional ? "" : "miss")) : "") }, missLabel(g) + (g.optional ? t("optional") : "")); };
+  const body = h("div", { class: "sheet", role: "dialog", "aria-modal": "true", "aria-label": r.name, onclick: e => e.stopPropagation() },
+    h("div", { class: "row", style: "justify-content:space-between" }, h("span", { class: "chip static" }, r.catZh), h("button", { class: "icon-btn", onclick: close }, t("close") + " ✕")),
+    h("h2", {}, r.name),
+    h("div", { class: "m mute row" }, r.diff ? h("span", { class: "stars" }, stars(r.diff)) : null, r.kcal ? h("span", {}, `${r.kcal} ${t("kcal")}`) : null),
+    r.desc ? h("p", { class: "mute" }, r.desc) : null,
+    h("div", { class: "row" }, fav, dn),
+    S.lang === "en" ? h("p", { class: "mute" }, t("notes_en")) : null,
+    h("h3", {}, t("ings")), h("div", { class: "chips" }, r.ings.map(ingChip)),
+    r.amounts.length ? [h("h3", {}, t("amounts")), h("ul", { class: "plain" }, r.amounts.map(a => h("li", {}, a)))] : null,
+    r.tools.length ? [h("h3", {}, t("tools")), h("div", { class: "chips" }, r.tools.map(x => h("span", { class: "chip static" }, x)))] : null,
+    h("h3", {}, t("steps")), h("ol", { class: "steps" }, r.steps.map(s => h("li", {}, stepEls(s)))),
+    h("p", { style: "margin-top:18px" }, h("a", { href: r.url, target: "_blank", rel: "noopener", style: "color:var(--acc)" }, t("source") + " ↗")));
+  $("#modal").replaceChildren(h("div", { class: "overlay", onclick: close }, body)); document.body.style.overflow = "hidden";
+  body.scrollTop = 0;
+}
+function toggle(key, id) { const a = S[key], i = a.indexOf(id); i < 0 ? a.push(id) : a.splice(i, 1); save(key); }
+
+/* ---------- timers ---------- */
+const timers = []; let tick = null, ac = null;
+function beep() {
+  try { ac ||= new (window.AudioContext || window.webkitAudioContext)(); const o = ac.createOscillator(), g = ac.createGain(); o.connect(g); g.connect(ac.destination); o.frequency.value = 880; g.gain.setValueAtTime(.3, ac.currentTime); g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + .9); o.start(); o.stop(ac.currentTime + .9); } catch (e) {}
+  try { navigator.vibrate && navigator.vibrate([300, 150, 300]); } catch (e) {}
+}
+function startTimer(secs) {
+  try { ac ||= new (window.AudioContext || window.webkitAudioContext)(); ac.resume && ac.resume(); } catch (e) {}
+  timers.push({ end: Date.now() + secs * 1000, secs, done: false }); drawTimers();
+  tick ||= setInterval(drawTimers, 500);
+}
+function drawTimers() {
+  const box = $("#timers");
+  for (const x of timers) if (!x.done && Date.now() >= x.end) { x.done = true; beep(); }
+  box.replaceChildren(...timers.map((x, i) => h("div", { class: "timer" + (x.done ? " done" : "") },
+    x.done ? "⏰ " + t("timer_done") : "⏱ " + fmt(Math.max(0, Math.ceil((x.end - Date.now()) / 1000))),
+    h("button", { onclick: () => { timers.splice(i, 1); drawTimers(); } }, x.done ? "✕" : t("stop")))));
+  if (!timers.length && tick) { clearInterval(tick); tick = null; }
+}
+
+/* ---------- settings ---------- */
+function openSettings() {
+  const close = () => { $("#modal").replaceChildren(); document.body.style.overflow = ""; render(); };
+  const inp = h("input", { type: "text", placeholder: t("s_excl_ph") });
+  const exclBox = h("div", { class: "chips" });
+  const drawEx = () => exclBox.replaceChildren(...S.excl.map(x => h("button", { class: "chip on", onclick: () => { S.excl = S.excl.filter(y => y !== x); save("excl"); drawEx(); } }, x + " ✕")));
+  const addEx = () => { inp.value.split(/[,，、;；\s]+/).filter(Boolean).forEach(x => { if (!S.excl.includes(x)) S.excl.push(x); }); inp.value = ""; save("excl"); drawEx(); };
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); addEx(); } });
+  drawEx();
+  const presetBtn = k => h("button", { class: "chip" + (S.presets[k] ? " on" : ""), "aria-pressed": S.presets[k], onclick: e => { S.presets[k] = !S.presets[k]; save("presets"); e.currentTarget.classList.toggle("on", S.presets[k]); e.currentTarget.setAttribute("aria-pressed", S.presets[k]); } }, t("p_" + k));
+  const bchips = window.BASICS.map(b => h("button", { class: "chip" + (S.basics.includes(b) ? " on" : ""), onclick: e => { S.basics = S.basics.includes(b) ? S.basics.filter(x => x !== b) : [...S.basics, b]; save("basics"); e.currentTarget.classList.toggle("on", S.basics.includes(b)); } }, ingShort(b)));
+  const body = h("div", { class: "sheet stack", role: "dialog", "aria-modal": "true", onclick: e => e.stopPropagation() },
+    h("div", { class: "row", style: "justify-content:space-between" }, h("h2", { style: "margin:0" }, t("s_title")), h("button", { class: "icon-btn", onclick: close }, t("close") + " ✕")),
+    h("h3", {}, t("s_presets")), h("div", { class: "chips" }, presetBtn("spicy"), presetBtn("seafood"), presetBtn("veg")),
+    h("h3", {}, t("s_excl")), h("div", { class: "row" }, h("div", { class: "grow" }, inp), h("button", { class: "btn small", onclick: addEx }, t("add"))), exclBox,
+    h("h3", {}, t("s_basics")), h("div", { class: "chips" }, bchips),
+    h("h3", {}, t("s_data")), h("p", { class: "mute" }, t("s_about", R.length)), h("p", { class: "mute" }, t("s_note")));
+  $("#modal").replaceChildren(h("div", { class: "overlay", onclick: close }, body)); document.body.style.overflow = "hidden";
+}
+
+/* ---------- boot ---------- */
+$("#btnSet").addEventListener("click", openSettings);
+$("#btnLang").addEventListener("click", () => { S.lang = S.lang === "zh" ? "en" : "zh"; save("lang"); render(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && $("#modal").firstChild) { $("#modal").replaceChildren(); document.body.style.overflow = ""; } });
+render();
+</script>
+</body>
+</html>
